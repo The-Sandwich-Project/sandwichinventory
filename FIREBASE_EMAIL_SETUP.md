@@ -46,7 +46,7 @@ exports.createEmailOnNewSurvey = functions.database
           ${data.impactStory ?
             `<p><strong>💬 Impact Story:</strong><br>${data.impactStory}</p>` : ''}
           <hr>
-          <a href="https://nicunursekatie.github.io/sandwichinventory/view-responses.html">View Full Response</a>
+          <a href="https://the-sandwich-project.github.io/sandwichinventory/view-responses.html">View Full Response</a>
           <p><small>Submitted: ${new Date(data.timestamp).toLocaleString()}</small></p>
         `
       }
