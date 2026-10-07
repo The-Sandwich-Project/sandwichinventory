@@ -36,7 +36,7 @@ ${data.impactStory ?
   `💬 Impact Story: ${data.impactStory}\n` : ''}
 
 View full response:
-https://nicunursekatie.github.io/sandwichinventory/view-responses.html
+https://the-sandwich-project.github.io/sandwichinventory/view-responses.html
 
 Response ID: ${responseId}
 Submitted: ${new Date(data.timestamp).toLocaleString()}
