@@ -2428,14 +2428,51 @@
             return catalog;
         }
 
-        // Products edited on admin.html are stored in Firebase and override the bundled list.
+        // Products edited on admin.html are stored on these fields. toolkitFiles is fetched by the toolkit page only.
+        const LIVE_CATALOG_KEYS = ['meat', 'cheese', 'bread', 'peanutButter', 'jelly', 'bags', 'spatulas'];
+
+        async function fetchLiveValue(key, signal) {
+            const response = await fetch(LIVE_CATALOG_URL.replace(/\.json$/, '/' + key + '.json'), {
+                cache: 'no-store',
+                signal: signal
+            });
+            if (!response.ok) throw new Error('Live product list could not be loaded.');
+            return response.json();
+        }
+
+        function liveRevision(metadata) {
+            return metadata && Number(metadata.revision) || 0;
+        }
+
         async function loadLiveCatalog() {
             const controller = new AbortController();
             const timer = setTimeout(function() { controller.abort(); }, 5000);
             try {
-                const response = await fetch(LIVE_CATALOG_URL, { cache: 'no-store', signal: controller.signal });
-                if (!response.ok) return null;
-                return await response.json();
+                const packed = await fetchLiveValue('catalog', controller.signal);
+                if (packed && typeof packed === 'object' && (packed.metadata || Array.isArray(packed.meat))) return packed;
+                for (let attempt = 0; attempt < 3; attempt++) {
+                    const before = await fetchLiveValue('metadata', controller.signal);
+                    const entries = await Promise.all(LIVE_CATALOG_KEYS.map(async function(key) {
+                        return [key, await fetchLiveValue(key, controller.signal)];
+                    }));
+                    const after = await fetchLiveValue('metadata', controller.signal);
+                    if (liveRevision(before) !== liveRevision(after)) continue;
+                    const catalog = {};
+                    let any = false;
+                    if (before != null) {
+                        catalog.metadata = before;
+                        any = true;
+                    }
+                    entries.forEach(function(entry) {
+                        if (entry[1] != null) {
+                            catalog[entry[0]] = entry[1];
+                            any = true;
+                        }
+                    });
+                    return any ? catalog : null;
+                }
+                console.warn('Live product list changed while it was loading.');
+                return null;
             } catch (error) {
                 console.warn('Live product list could not be loaded.', error);
                 return null;

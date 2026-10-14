@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replace toolkit files</title>
+    <script src="toolkit-catalog.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <style>
+        :root { --navy: #236383; --teal: #007E8C; --gold: #FBAD3F; --ink: #1f3340; --line: #d5e3ea; }
+        * { box-sizing: border-box; }
+        [hidden] { display: none !important; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: #f4f7f8; }
+        header { background: var(--navy); color: white; padding: 20px 16px; }
+        header a { color: #d7f3f6; }
+        h1 { margin: 0 0 6px; font-size: 1.6rem; }
+        header p { margin: 0; line-height: 1.45; }
+        main { max-width: 860px; margin: 0 auto; padding: 16px; }
+        .toolbar, .status, .file-card { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        button { border: 0; border-radius: 8px; padding: 8px 12px; font-weight: 700; cursor: pointer; background: #e8f2f5; color: var(--navy); }
+        button.primary { background: var(--gold); color: #1f1a12; }
+        button:disabled { cursor: default; opacity: 0.55; }
+        h2 { margin: 0 0 8px; color: var(--navy); font-size: 1.15rem; }
+        p { margin: 0 0 10px; line-height: 1.45; }
+        label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; font-weight: 700; color: #3e6272; }
+        input[type="password"], input[type="text"], input[type="file"] { width: 100%; border: 1px solid #c5d6de; border-radius: 8px; padding: 8px; font: inherit; color: var(--ink); background: white; }
+        .login { max-width: 420px; }
+        .login label { margin: 12px 0; }
+        #loginError, .row-error { color: #A31C41; font-weight: 700; min-height: 1.2em; }
+        .status { background: #fff8eb; border-color: #f3d7a1; }
+        .current { color: #3e6272; }
+        .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+        .open-link { font-weight: 700; color: var(--teal); }
+        .file-card .description { color: #456674; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Toolkit files</h1>
+        <p>Sign in to replace the guides and labels on the group event toolkit.</p>
+        <p style="margin-top: 8px;"><a href="toolkit.html">Back to the toolkit</a></p>
+    </header>
+    <main>
+        <section id="loginPanel" class="login toolbar">
+            <h2>Admin login</h2>
+            <p>Enter the admin password. A replacement shows up on the toolkit page for everyone, and the built-in file stays available if you restore it.</p>
+            <form id="loginForm">
+                <label>Password
+                    <input id="adminPassword" type="password" autocomplete="current-password" required>
+                </label>
+                <p id="loginError"></p>
+                <button class="primary" type="submit">Sign in</button>
+            </form>
+        </section>
+        <div id="editor" hidden>
+            <div class="toolbar">
+                <button id="logoutBtn" type="button">Log out</button>
+            </div>
+            <div id="status" class="status">Loading files…</div>
+            <div id="files"></div>
+        </div>
+    </main>
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyBJ9sUwY_gw2bYWXCffV0RKuQkXqRq-hTU",
+            authDomain: "recipient-survey.firebaseapp.com",
+            databaseURL: "https://recipient-survey-default-rtdb.firebaseio.com",
+            projectId: "recipient-survey",
+            storageBucket: "recipient-survey.firebasestorage.app"
+        });
+        const AUTH_KEY = 'tspAdminSession';
+        // SHA-256 of the shared admin password. To change it, replace this with the hash of the new one.
+        const ADMIN_PASSWORD_HASH = '3ffca04cc6f976acedfa7c5cc77d44363d28370166a1a1728a25b582ee37b14e';
+        // Stored beside the product list because that is the database path this site is allowed to write.
+        const filesRef = firebase.database().ref('product-catalog/toolkitFiles');
+        let records = {};
+        let saving = false;
+        const previewUrls = {};
+
+        function setStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        function builtInName(item) {
+            return window.TSP_toolkitFileName(item.path);
+        }
+
+        function revokePreview(id) {
+            if (!previewUrls[id]) return;
+            URL.revokeObjectURL(previewUrls[id]);
+            delete previewUrls[id];
+        }
+
+        function previewUrl(item, record) {
+            revokePreview(item.id);
+            if (!record) return item.path;
+            try {
+                const binary = atob(record.data);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+                const url = URL.createObjectURL(new Blob([bytes], { type: record.type }));
+                previewUrls[item.id] = url;
+                return url;
+            } catch (error) {
+                return item.path;
+            }
+        }
+
+        function render() {
+            const root = document.getElementById('files');
+            root.innerHTML = '';
+            window.TSP_TOOLKIT_FILES.forEach(function(item) {
+                const record = window.TSP_toolkitRecordOk(item, records[item.id]) ? records[item.id] : null;
+                const card = document.createElement('section');
+                card.className = 'file-card';
+                const title = document.createElement('h2');
+                title.textContent = item.title;
+                const description = document.createElement('p');
+                description.className = 'description';
+                description.textContent = item.description;
+                const current = document.createElement('p');
+                current.className = 'current';
+                const open = document.createElement('a');
+                open.className = 'open-link';
+                open.target = '_blank';
+                open.rel = 'noopener';
+                open.textContent = 'Open current file';
+                if (record) {
+                    const when = record.updatedAt ? new Date(record.updatedAt).toLocaleString() : 'an earlier upload';
+                    current.textContent = 'Visitors are getting a replacement from ' + when + ': ' + window.TSP_toolkitSafeName(record.name);
+                    open.href = previewUrl(item, record);
+                } else {
+                    current.textContent = 'Visitors are getting the built-in file: ' + builtInName(item);
+                    open.href = item.path;
+                    if (records[item.id]) current.textContent = 'A saved replacement was ignored because it is not a valid file. Visitors still get the built-in file.';
+                }
+                const picker = document.createElement('label');
+                picker.textContent = item.kind === 'image' ? 'Replacement image' : 'Replacement PDF';
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = item.types.join(',');
+                picker.appendChild(input);
+                let altInput = null;
+                let altLabel = null;
+                if (item.kind === 'image') {
+                    altLabel = document.createElement('label');
+                    altLabel.textContent = 'What the image shows, for screen readers';
+                    altInput = document.createElement('input');
+                    altInput.type = 'text';
+                    altInput.maxLength = 500;
+                    altInput.value = record && typeof record.alt === 'string' ? record.alt : '';
+                    altInput.placeholder = 'Leave blank to use the guide title. The built-in description is not kept.';
+                    altLabel.appendChild(altInput);
+                }
+                const actions = document.createElement('div');
+                actions.className = 'actions';
+                const replace = document.createElement('button');
+                replace.type = 'button';
+                replace.className = 'primary';
+                replace.textContent = 'Replace file';
+                const restore = document.createElement('button');
+                restore.type = 'button';
+                restore.textContent = 'Use the built-in file';
+                restore.disabled = !records[item.id];
+                const rowStatus = document.createElement('p');
+                rowStatus.className = 'row-error';
+                replace.addEventListener('click', function() { replaceFile(item, input, altInput, rowStatus); });
+                restore.addEventListener('click', function() { restoreFile(item, rowStatus); });
+                actions.append(replace, restore, open);
+                card.append(title, description, current, picker);
+                if (altLabel) card.appendChild(altLabel);
+                card.append(actions, rowStatus);
+                root.appendChild(card);
+            });
+        }
+
+        function readFile(file) {
+            return new Promise(function(resolve, reject) {
+                const reader = new FileReader();
+                reader.addEventListener('load', function() {
+                    const value = String(reader.result || '');
+                    const marker = 'base64,';
+                    const start = value.indexOf(marker);
+                    if (start === -1) reject(new Error('Could not read that file.'));
+                    else resolve(value.slice(start + marker.length));
+                });
+                reader.addEventListener('error', function() { reject(new Error('Could not read that file.')); });
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function choiceError(item, file) {
+            if (!file) return item.kind === 'image' ? 'Choose an image first.' : 'Choose a PDF first.';
+            if (file.size > window.TSP_TOOLKIT_MAX_BYTES) return 'That file is larger than 4 MB. Choose a smaller one.';
+            if (!window.TSP_toolkitType(item, file)) {
+                return item.kind === 'image'
+                    ? 'Choose a PNG, JPEG, or WebP image.'
+                    : 'Choose a PDF.';
+            }
+            return '';
+        }
+
+        async function replaceFile(item, input, altInput, rowStatus) {
+            if (saving) return;
+            const file = input.files && input.files[0];
+            const problem = choiceError(item, file);
+            rowStatus.textContent = problem;
+            if (problem) return;
+            const alt = altInput ? altInput.value.trim() : '';
+            if (alt.length > 500) {
+                rowStatus.textContent = 'Shorten the image description to 500 characters or less.';
+                return;
+            }
+            saving = true;
+            setStatus('Uploading ' + item.title + '…');
+            try {
+                const type = window.TSP_toolkitType(item, file);
+                const record = {
+                    name: window.TSP_toolkitSafeName(file.name),
+                    type: type,
+                    updatedAt: new Date().toISOString(),
+                    data: await readFile(file)
+                };
+                if (alt) record.alt = alt;
+                if (!window.TSP_toolkitRecordOk(item, record)) throw new Error('That file could not be prepared for upload.');
+                await filesRef.child(item.id).set(record);
+                records[item.id] = record;
+                input.value = '';
+                render();
+                setStatus('Replaced ' + item.title + '. The toolkit page now uses this file for everyone.');
+            } catch (error) {
+                console.error(error);
+                rowStatus.textContent = /permission/i.test(String(error && (error.code || error.message)))
+                    ? 'Not saved: the database is not accepting toolkit files.'
+                    : 'Not saved: could not reach the database. Check your connection and try again.';
+                setStatus('The replacement was not saved.');
+            } finally {
+                saving = false;
+            }
+        }
+
+        async function restoreFile(item, rowStatus) {
+            if (saving) return;
+            saving = true;
+            rowStatus.textContent = '';
+            setStatus('Restoring the built-in ' + item.title + '…');
+            try {
+                await filesRef.child(item.id).remove();
+                delete records[item.id];
+                revokePreview(item.id);
+                render();
+                setStatus('Restored ' + item.title + '. The toolkit page uses the built-in file again.');
+            } catch (error) {
+                console.error(error);
+                rowStatus.textContent = 'Not restored: could not reach the database. Check your connection and try again.';
+                setStatus('The built-in file was not restored.');
+            } finally {
+                saving = false;
+            }
+        }
+
+        async function loadFiles() {
+            setStatus('Loading files…');
+            document.getElementById('files').innerHTML = '';
+            try {
+                const snapshot = await filesRef.once('value');
+                records = snapshot.val() || {};
+            } catch (error) {
+                console.warn('Toolkit files could not be loaded.', error);
+                records = {};
+                setStatus('Could not load the saved files. Reload the page to try again.');
+                return;
+            }
+            render();
+            setStatus('Choose a new PDF or image for any file below. The toolkit updates as soon as the upload finishes.');
+        }
+
+        function showEditor() {
+            document.getElementById('loginPanel').hidden = true;
+            document.getElementById('editor').hidden = false;
+            loadFiles();
+        }
+
+        function showLogin() {
+            document.getElementById('loginPanel').hidden = false;
+            document.getElementById('editor').hidden = true;
+            document.getElementById('adminPassword').value = '';
+            Object.keys(previewUrls).forEach(revokePreview);
+        }
+
+        async function passwordHash(password) {
+            const bytes = new TextEncoder().encode(password);
+            const digest = await crypto.subtle.digest('SHA-256', bytes);
+            return Array.from(new Uint8Array(digest)).map(function(byte) {
+                return byte.toString(16).padStart(2, '0');
+            }).join('');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const error = document.getElementById('loginError');
+            const hash = await passwordHash(document.getElementById('adminPassword').value);
+            if (hash !== ADMIN_PASSWORD_HASH) {
+                error.textContent = 'That password is not correct.';
+                return;
+            }
+            error.textContent = '';
+            sessionStorage.setItem(AUTH_KEY, 'signed-in');
+            showEditor();
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (saving) return;
+            sessionStorage.removeItem(AUTH_KEY);
+            records = {};
+            showLogin();
+        });
+
+        if (sessionStorage.getItem(AUTH_KEY) === 'signed-in') showEditor();
+    </script>
+</body>
+</html>
