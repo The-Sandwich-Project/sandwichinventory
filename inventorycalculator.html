@@ -3167,7 +3167,7 @@
                 
                 if (remaining > 5) { // More than $5 remaining
                     budgetStatusMessage = `
-                        <div style="background: rgba(71,179,203,0.15); border: 3px solid #47B3CB; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                        <div style="background: #E9EFF3; color: #114145; border: 3px solid #47B3CB; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
                             <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-check-circle" style="background-color: #236383;"></span></div>
                             <h4 style="color: #236383; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Optimal Budget Planning!</h4>
                             <p style="color: #114145; margin: 0; font-size: 1.2em; font-weight: 500;">
@@ -3182,7 +3182,7 @@
                     `;
                 } else if (remaining > 0) { // Small amount remaining
                     budgetStatusMessage = `
-                        <div style="background: #FEF3E2; border: 3px solid #FBAD3F; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                        <div style="background: #FEF3E2; color: #114145; border: 3px solid #FBAD3F; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
                             <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-alert-triangle" style="background-color: #114145;"></span></div>
                             <h4 style="color: #114145; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Budget Optimized!</h4>
                             <p style="color: #114145; margin: 0; font-size: 1.2em; font-weight: 500;">
@@ -3197,7 +3197,7 @@
                     `;
                 } else { // Exactly at budget
                     budgetStatusMessage = `
-                        <div style="background: rgba(71,179,203,0.15); border: 3px solid #47B3CB; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                        <div style="background: #E9EFF3; color: #114145; border: 3px solid #47B3CB; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
                             <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-target" style="background-color: #236383;"></span></div>
                             <h4 style="color: #236383; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Perfect Budget Match!</h4>
                             <p style="color: #114145; margin: 0; font-size: 1.2em; font-weight: 500;">
@@ -3679,7 +3679,7 @@
                 let tightBudgetWarning = '';
                 if (budget <= 30) {
                     tightBudgetWarning = `
-                        <div style="margin-top: 12px; padding: 10px; background: rgba(255,193,7,0.2); border-radius: 8px; font-size: 0.95em;">
+                        <div style="margin-top: 12px; padding: 10px; background: rgba(251,173,63,0.28); border-radius: 8px; font-size: 0.95em;">
                             <span class="icon icon-alert-triangle icon-alert"></span> Note: Budgets under $30 are quite tight and yield limited quantities. Consider increasing your budget for better value and more sandwiches.
                         </div>
                     `;
@@ -3687,7 +3687,7 @@
 
                 if (remaining >= budget * 0.1) {
                     budgetStatusMessage = `
-                        <div style="margin-top: 20px; padding: 20px; background: rgba(71,179,203,0.2); border-radius: 12px; text-align: center; border: 2px solid #47B3CB;">
+                        <div style="margin-top: 20px; padding: 20px; background: #E9EFF3; color: #114145; border-radius: 12px; text-align: center; border: 2px solid #47B3CB;">
                             <h4 style="color: #236383; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-check-circle" style="background-color: #236383;"></span> Optimal Budget Planning!</h4>
                             <div style="color: #114145; font-size: 1.1em;">
                                 Remaining budget: <strong>$${remaining.toFixed(2)}</strong> (${savingsPercent}% under budget)
@@ -3700,7 +3700,7 @@
                     `;
                 } else if (remaining > 0) {
                     budgetStatusMessage = `
-                        <div style="margin-top: 20px; padding: 20px; background: #FEF3E2; border-radius: 12px; text-align: center; border: 2px solid #FBAD3F;">
+                        <div style="margin-top: 20px; padding: 20px; background: #FEF3E2; color: #114145; border-radius: 12px; text-align: center; border: 2px solid #FBAD3F;">
                             <h4 style="color: #114145; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-chart" style="background-color: #114145;"></span> Budget Optimized!</h4>
                             <div style="color: #114145; font-size: 1.1em;">
                                 Only <strong>$${remaining.toFixed(2)}</strong> remaining (${savingsPercent}% under budget)
@@ -3713,7 +3713,7 @@
                     `;
                 } else {
                     budgetStatusMessage = `
-                        <div style="margin-top: 20px; padding: 20px; background: rgba(71,179,203,0.2); border-radius: 12px; text-align: center; border: 2px solid #47B3CB;">
+                        <div style="margin-top: 20px; padding: 20px; background: #E9EFF3; color: #114145; border-radius: 12px; text-align: center; border: 2px solid #47B3CB;">
                             <h4 style="color: #236383; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-target" style="background-color: #236383;"></span> Perfect Budget Match!</h4>
                             <div style="color: #114145; font-size: 1.1em;">
                                 Uses your entire $${budget.toFixed(2)} budget
