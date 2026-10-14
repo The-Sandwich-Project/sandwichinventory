@@ -313,13 +313,12 @@
             document.getElementById('logoutBtn').disabled = true;
             setStatus('Saving…');
             try {
-                const result = await catalogRef.transaction(function(current) {
+                const catalogNode = catalogRef.child('catalog');
+                const result = await catalogNode.transaction(function(current) {
                     // RTDB may call this first with a stale local null; returning a value lets the server
                     // re-run it with the real data, where the revision check applies.
                     if (current !== null && revisionOf(current) !== loadedRevision) return;
-                    const next = clone(snapshot);
-                    if (current && current.toolkitFiles) next.toolkitFiles = current.toolkitFiles;
-                    return next;
+                    return snapshot;
                 }, null, false);
                 if (!result.committed) {
                     catalog.metadata.revision = loadedRevision;
@@ -328,6 +327,11 @@
                 }
                 loadedRevision = snapshot.metadata.revision;
                 savedCopy = clone(snapshot);
+                const mirror = { metadata: snapshot.metadata };
+                PRODUCT_KEYS.forEach(function(key) {
+                    if (snapshot[key] !== undefined) mirror[key] = snapshot[key];
+                });
+                await catalogRef.update(mirror);
                 setStatus('Saved. The calculator now uses this product list for everyone.');
             } catch (error) {
                 console.error(error);
@@ -348,39 +352,53 @@
             setEditable(false);
             let online = false;
             try {
-                let loaded = null;
-                for (let attempt = 0; attempt < 3; attempt++) {
-                    const before = await catalogRef.child('metadata').once('value');
-                    const snaps = await Promise.all(PRODUCT_KEYS.map(function(key) {
-                        return catalogRef.child(key).once('value');
-                    }));
-                    const after = await catalogRef.child('metadata').once('value');
-                    const beforeRevision = before.exists() ? (Number(before.val().revision) || 0) : 0;
-                    const afterRevision = after.exists() ? (Number(after.val().revision) || 0) : 0;
-                    if (beforeRevision !== afterRevision) continue;
-                    loaded = { before: before, snaps: snaps };
-                    break;
-                }
-                if (!loaded) {
-                    catalog = null;
-                    setStatus('The product list changed while it was loading. Reload the page to try again. Saving is off so nothing gets overwritten.');
-                    return;
-                }
-                catalog = {};
-                if (loaded.before.exists()) {
-                    catalog.metadata = loaded.before.val();
+                const packed = await catalogRef.child('catalog').once('value');
+                if (packed.exists()) {
+                    catalog = packed.val();
                     online = true;
                 }
-                loaded.snaps.forEach(function(snap, index) {
-                    if (!snap.exists()) return;
-                    catalog[PRODUCT_KEYS[index]] = snap.val();
-                    online = true;
-                });
             } catch (error) {
                 console.warn('Saved product list could not be loaded.', error);
                 catalog = null;
                 setStatus('Could not load the online product list. Reload the page to try again. Saving is off so nothing gets overwritten.');
                 return;
+            }
+            if (!online) {
+                try {
+                    let loaded = null;
+                    for (let attempt = 0; attempt < 3; attempt++) {
+                        const before = await catalogRef.child('metadata').once('value');
+                        const snaps = await Promise.all(PRODUCT_KEYS.map(function(key) {
+                            return catalogRef.child(key).once('value');
+                        }));
+                        const after = await catalogRef.child('metadata').once('value');
+                        const beforeRevision = before.exists() ? (Number(before.val().revision) || 0) : 0;
+                        const afterRevision = after.exists() ? (Number(after.val().revision) || 0) : 0;
+                        if (beforeRevision !== afterRevision) continue;
+                        loaded = { before: before, snaps: snaps };
+                        break;
+                    }
+                    if (!loaded) {
+                        catalog = null;
+                        setStatus('The product list changed while it was loading. Reload the page to try again. Saving is off so nothing gets overwritten.');
+                        return;
+                    }
+                    catalog = {};
+                    if (loaded.before.exists()) {
+                        catalog.metadata = loaded.before.val();
+                        online = true;
+                    }
+                    loaded.snaps.forEach(function(snap, index) {
+                        if (!snap.exists()) return;
+                        catalog[PRODUCT_KEYS[index]] = snap.val();
+                        online = true;
+                    });
+                } catch (error) {
+                    console.warn('Saved product list could not be loaded.', error);
+                    catalog = null;
+                    setStatus('Could not load the online product list. Reload the page to try again. Saving is off so nothing gets overwritten.');
+                    return;
+                }
             }
             if (!online) {
                 catalog = clone(window.TSP_DEFAULT_CATALOG);

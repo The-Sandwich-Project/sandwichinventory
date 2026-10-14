@@ -413,21 +413,31 @@
             }
         }
 
+        const downloadButton = document.querySelector('.download-all-button');
+        let replacementsReady = Promise.resolve();
+
         function downloadAll() {
-            document.querySelectorAll('.tool-card[data-download="1"]').forEach(function(card, index) {
-                setTimeout(function() {
-                    const link = document.createElement('a');
-                    link.href = card.href;
-                    link.download = card.dataset.filename || 'toolkit-file';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }, index * 300);
+            if (downloadButton) downloadButton.disabled = true;
+            replacementsReady.finally(function() {
+                document.querySelectorAll('.tool-card[data-download="1"]').forEach(function(card, index) {
+                    setTimeout(function() {
+                        const link = document.createElement('a');
+                        link.href = card.href;
+                        link.download = card.dataset.filename || 'toolkit-file';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }, index * 300);
+                });
+                if (downloadButton) downloadButton.disabled = false;
             });
         }
 
         renderToolkit();
-        loadReplacements();
+        if (downloadButton) downloadButton.disabled = true;
+        replacementsReady = loadReplacements().finally(function() {
+            if (downloadButton) downloadButton.disabled = false;
+        });
     </script>
 </body>
 </html>

@@ -2448,6 +2448,8 @@
             const controller = new AbortController();
             const timer = setTimeout(function() { controller.abort(); }, 5000);
             try {
+                const packed = await fetchLiveValue('catalog', controller.signal);
+                if (packed && typeof packed === 'object' && (packed.metadata || Array.isArray(packed.meat))) return packed;
                 for (let attempt = 0; attempt < 3; attempt++) {
                     const before = await fetchLiveValue('metadata', controller.signal);
                     const entries = await Promise.all(LIVE_CATALOG_KEYS.map(async function(key) {
