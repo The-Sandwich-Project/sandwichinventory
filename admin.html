@@ -32,7 +32,10 @@
         .login p { color: #456674; line-height: 1.45; }
         .login label { font-size: 0.85rem; margin: 12px 0; }
         #loginError { color: #A31C41; font-weight: 700; min-height: 1.2em; }
-        .hide { align-items: center; flex-direction: row; gap: 6px; font-size: 0.85rem; padding-bottom: 8px; }
+        .hide { align-items: center; flex-direction: row; gap: 6px; font-size: 0.85rem; }
+        /* Hide and Delete share one grid cell so the meat row still fits on a single line. */
+        .actions { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding-bottom: 8px; }
+        .remove { background: #fdebef; color: #A31C41; padding: 6px 10px; font-size: 0.8rem; }
         .status { background: #fff8eb; border-color: #f3d7a1; }
         .add { margin-top: 8px; }
         @media (max-width: 800px) {
@@ -263,7 +266,30 @@
                         row.className = 'product' + (box.checked ? ' hidden-product' : '');
                     });
                     hide.append(box, document.createTextNode('Hide'));
-                    row.appendChild(hide);
+                    const actions = document.createElement('div');
+                    actions.className = 'actions';
+                    actions.appendChild(hide);
+                    const remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'remove';
+                    remove.textContent = 'Delete';
+                    remove.addEventListener('click', function() {
+                        const list = catalog[section.key];
+                        const label = String(item.name || '').trim() || 'this unnamed row';
+                        // An empty list is dropped on save, which would bring the whole category
+                        // back from the starting list. Hiding the last row keeps it off the menu.
+                        if (list.length === 1) {
+                            setStatus('Cannot delete the last ' + section.title.toLowerCase() + ' row. Tick Hide instead to keep it off the calculator.');
+                            return;
+                        }
+                        if (!window.confirm('Delete ' + label + '? It leaves the calculator when you save. Until then you can bring it back with "Undo unsaved edits".')) return;
+                        const at = list.indexOf(item);
+                        if (at !== -1) list.splice(at, 1);
+                        render();
+                        setStatus('Deleted ' + label + '. Press "Save changes" to make that final.');
+                    });
+                    actions.appendChild(remove);
+                    row.appendChild(actions);
                     block.appendChild(row);
                 });
                 const add = document.createElement('button');
