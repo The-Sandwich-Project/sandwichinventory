@@ -16,7 +16,8 @@
         header a { color: #d7f3f6; }
         h1 { margin: 0 0 6px; font-size: 1.6rem; }
         header p, .note { margin: 0; line-height: 1.45; }
-        main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+        /* Wide enough that the meat row, the longest one, still fits on a single line. */
+        main { max-width: 1200px; margin: 0 auto; padding: 16px; }
         .toolbar, .status, section { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
         .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; position: sticky; top: 8px; z-index: 2; }
         button { border: 0; border-radius: 8px; padding: 8px 12px; font-weight: 700; cursor: pointer; background: #e8f2f5; color: var(--navy); }
@@ -49,7 +50,7 @@
     <main>
         <section id="loginPanel" class="login toolbar">
             <h2>Admin login</h2>
-            <p>Enter the admin password to edit names, stores, amounts, and prices. Saved changes go live in the calculator for everyone.</p>
+            <p>Enter the admin password to edit names, stores, product numbers, amounts, and prices. Saved changes go live in the calculator for everyone.</p>
             <form id="loginForm">
                 <label>Password
                     <input id="adminPassword" type="password" autocomplete="current-password" required>
@@ -229,6 +230,7 @@
                         item.pricingTitle = value;
                     }));
                     row.appendChild(input('Store', item.store || '', function(value) { item.store = value; }));
+                    row.appendChild(input('Product #', item.productNumber || '', function(value) { item.productNumber = value.trim(); }));
                     section.amounts.forEach(function(amount) {
                         row.appendChild(input(amount.label, item[amount.key], function(value) {
                             item[amount.key] = num(value);
@@ -279,11 +281,11 @@
 
         function blankProduct(category) {
             const id = category + '-' + Date.now();
-            if (category === 'meat') return { id: id, name: '', store: '', price: '', weightOz: '', slices: '', meatType: 'turkey', group: 'more', description: '', pricingTitle: '', pricingSize: '' };
-            if (category === 'cheese') return { id: id, name: '', store: '', price: '', slices: '', cheeseType: 'muenster', description: '', pricingTitle: '' };
-            if (category === 'bread') return { id: id, name: '', store: '', price: '', weightOz: '', sandwichesPerLoaf: '', usableSlices: '', description: '', pricingTitle: '', pricingSize: '' };
-            if (category === 'peanutButter') return { id: id, name: '', store: '', price: '', sizeOz: '', tablespoons: '', sizeLabel: '', description: '' };
-            return { id: id, name: '', store: '', price: '', sizeOz: '', tablespoons: '', description: '' };
+            if (category === 'meat') return { id: id, name: '', store: '', productNumber: '', price: '', weightOz: '', slices: '', meatType: 'turkey', group: 'more', description: '', pricingTitle: '', pricingSize: '' };
+            if (category === 'cheese') return { id: id, name: '', store: '', productNumber: '', price: '', slices: '', cheeseType: 'muenster', description: '', pricingTitle: '' };
+            if (category === 'bread') return { id: id, name: '', store: '', productNumber: '', price: '', weightOz: '', sandwichesPerLoaf: '', usableSlices: '', description: '', pricingTitle: '', pricingSize: '' };
+            if (category === 'peanutButter') return { id: id, name: '', store: '', productNumber: '', price: '', sizeOz: '', tablespoons: '', sizeLabel: '', description: '' };
+            return { id: id, name: '', store: '', productNumber: '', price: '', sizeOz: '', tablespoons: '', description: '' };
         }
 
         async function save() {
