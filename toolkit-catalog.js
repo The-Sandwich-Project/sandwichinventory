@@ -102,10 +102,17 @@
         if (!file || file.size <= 0 || file.size > MAX_BYTES) return '';
         return matchingType(item, file.type, file.name);
     };
+    window.TSP_toolkitAlt = function(item, record) {
+        if (!item || item.kind !== 'image') return '';
+        const alt = record && typeof record.alt === 'string' ? record.alt.trim() : '';
+        if (!alt || alt.length > 500 || /[\u0000-\u001f]/.test(alt)) return item.title;
+        return alt;
+    };
     window.TSP_toolkitRecordOk = function(item, record) {
         if (!record || typeof record !== 'object') return false;
         if (typeof record.data !== 'string' || typeof record.name !== 'string' || typeof record.type !== 'string') return false;
-        if (!matchingType(item, record.type, record.name)) return false;
+        if (item.types.indexOf(record.type) === -1) return false;
+        if (record.alt != null && (typeof record.alt !== 'string' || record.alt.length > 500 || /[\u0000-\u001f]/.test(record.alt))) return false;
         if (record.data.length > 5600000 || !/^[A-Za-z0-9+/]+={0,2}$/.test(record.data)) return false;
         return true;
     };

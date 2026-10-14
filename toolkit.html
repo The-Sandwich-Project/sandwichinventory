@@ -389,8 +389,10 @@
             card.dataset.filename = filename;
             const preview = card.querySelector('.pdf-preview');
             if (!preview) return;
-            if (preview.tagName === 'IMG') preview.src = url;
-            else preview.src = url + '#page=1&view=FitH';
+            if (preview.tagName === 'IMG') {
+                preview.src = url;
+                preview.alt = window.TSP_toolkitAlt(item, record);
+            } else preview.src = url + '#page=1&view=FitH';
         }
 
         async function loadReplacements() {

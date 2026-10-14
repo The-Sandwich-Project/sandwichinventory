@@ -80,8 +80,8 @@
         // SHA-256 of the shared admin password. To change it, replace this with the hash of the new one.
         const ADMIN_PASSWORD_HASH = '3ffca04cc6f976acedfa7c5cc77d44363d28370166a1a1728a25b582ee37b14e';
         const catalogRef = firebase.database().ref('product-catalog');
-        // toolkitFiles is a sibling of these fields. Loading or replacing the whole catalog would pull those files in or delete them.
-        const CATALOG_KEYS = ['meat', 'cheese', 'bread', 'peanutButter', 'jelly', 'bags', 'spatulas', 'metadata'];
+        // toolkitFiles sits beside these fields. Reads skip it, and saves copy it through unchanged.
+        const PRODUCT_KEYS = ['meat', 'cheese', 'bread', 'peanutButter', 'jelly', 'bags', 'spatulas'];
         const SECTIONS = [
             { key: 'meat', title: 'Deli meat', amounts: [
                 { key: 'weightOz', label: 'Weight (oz)' },
@@ -312,34 +312,26 @@
             setEditable(false);
             document.getElementById('logoutBtn').disabled = true;
             setStatus('Saving…');
-            let revisionSaved = false;
             try {
-                const result = await catalogRef.child('metadata').transaction(function(current) {
+                const result = await catalogRef.transaction(function(current) {
                     // RTDB may call this first with a stale local null; returning a value lets the server
                     // re-run it with the real data, where the revision check applies.
-                    if (current !== null && (Number(current.revision) || 0) !== loadedRevision) return;
-                    return snapshot.metadata;
+                    if (current !== null && revisionOf(current) !== loadedRevision) return;
+                    const next = clone(snapshot);
+                    if (current && current.toolkitFiles) next.toolkitFiles = current.toolkitFiles;
+                    return next;
                 }, null, false);
                 if (!result.committed) {
                     catalog.metadata.revision = loadedRevision;
                     setStatus('Not saved: someone else changed the products since you opened this page. Reload to see their changes, then make your edits again.');
                     return;
                 }
-                revisionSaved = true;
-                const updates = {};
-                CATALOG_KEYS.forEach(function(key) {
-                    if (key !== 'metadata' && snapshot[key] !== undefined) updates[key] = snapshot[key];
-                });
-                await catalogRef.update(updates);
                 loadedRevision = snapshot.metadata.revision;
                 savedCopy = clone(snapshot);
                 setStatus('Saved. The calculator now uses this product list for everyone.');
             } catch (error) {
                 console.error(error);
                 catalog.metadata.revision = loadedRevision;
-                if (revisionSaved) {
-                    try { await catalogRef.child('metadata/revision').set(loadedRevision); } catch (rollbackError) { /* Reload before the next save. */ }
-                }
                 setStatus(error && /permission/i.test(String(error.code || error.message))
                     ? 'Not saved: the database is not accepting product changes. Check the Firebase rules for product-catalog.'
                     : 'Not saved: could not reach the database. Check your connection and try again.');
@@ -356,13 +348,32 @@
             setEditable(false);
             let online = false;
             try {
-                const snaps = await Promise.all(CATALOG_KEYS.map(function(key) {
-                    return catalogRef.child(key).once('value');
-                }));
+                let loaded = null;
+                for (let attempt = 0; attempt < 3; attempt++) {
+                    const before = await catalogRef.child('metadata').once('value');
+                    const snaps = await Promise.all(PRODUCT_KEYS.map(function(key) {
+                        return catalogRef.child(key).once('value');
+                    }));
+                    const after = await catalogRef.child('metadata').once('value');
+                    const beforeRevision = before.exists() ? (Number(before.val().revision) || 0) : 0;
+                    const afterRevision = after.exists() ? (Number(after.val().revision) || 0) : 0;
+                    if (beforeRevision !== afterRevision) continue;
+                    loaded = { before: before, snaps: snaps };
+                    break;
+                }
+                if (!loaded) {
+                    catalog = null;
+                    setStatus('The product list changed while it was loading. Reload the page to try again. Saving is off so nothing gets overwritten.');
+                    return;
+                }
                 catalog = {};
-                snaps.forEach(function(snap, index) {
+                if (loaded.before.exists()) {
+                    catalog.metadata = loaded.before.val();
+                    online = true;
+                }
+                loaded.snaps.forEach(function(snap, index) {
                     if (!snap.exists()) return;
-                    catalog[CATALOG_KEYS[index]] = snap.val();
+                    catalog[PRODUCT_KEYS[index]] = snap.val();
                     online = true;
                 });
             } catch (error) {

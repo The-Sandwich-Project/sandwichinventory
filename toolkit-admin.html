@@ -25,7 +25,7 @@
         h2 { margin: 0 0 8px; color: var(--navy); font-size: 1.15rem; }
         p { margin: 0 0 10px; line-height: 1.45; }
         label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; font-weight: 700; color: #3e6272; }
-        input[type="password"], input[type="file"] { width: 100%; border: 1px solid #c5d6de; border-radius: 8px; padding: 8px; font: inherit; color: var(--ink); background: white; }
+        input[type="password"], input[type="text"], input[type="file"] { width: 100%; border: 1px solid #c5d6de; border-radius: 8px; padding: 8px; font: inherit; color: var(--ink); background: white; }
         .login { max-width: 420px; }
         .login label { margin: 12px 0; }
         #loginError, .row-error { color: #A31C41; font-weight: 700; min-height: 1.2em; }
@@ -142,6 +142,18 @@
                 input.type = 'file';
                 input.accept = item.types.join(',');
                 picker.appendChild(input);
+                let altInput = null;
+                let altLabel = null;
+                if (item.kind === 'image') {
+                    altLabel = document.createElement('label');
+                    altLabel.textContent = 'What the image shows, for screen readers';
+                    altInput = document.createElement('input');
+                    altInput.type = 'text';
+                    altInput.maxLength = 500;
+                    altInput.value = record && typeof record.alt === 'string' ? record.alt : '';
+                    altInput.placeholder = 'Leave blank to use the guide title. The built-in description is not kept.';
+                    altLabel.appendChild(altInput);
+                }
                 const actions = document.createElement('div');
                 actions.className = 'actions';
                 const replace = document.createElement('button');
@@ -154,10 +166,12 @@
                 restore.disabled = !records[item.id];
                 const rowStatus = document.createElement('p');
                 rowStatus.className = 'row-error';
-                replace.addEventListener('click', function() { replaceFile(item, input, rowStatus); });
+                replace.addEventListener('click', function() { replaceFile(item, input, altInput, rowStatus); });
                 restore.addEventListener('click', function() { restoreFile(item, rowStatus); });
                 actions.append(replace, restore, open);
-                card.append(title, description, current, picker, actions, rowStatus);
+                card.append(title, description, current, picker);
+                if (altLabel) card.appendChild(altLabel);
+                card.append(actions, rowStatus);
                 root.appendChild(card);
             });
         }
@@ -188,12 +202,17 @@
             return '';
         }
 
-        async function replaceFile(item, input, rowStatus) {
+        async function replaceFile(item, input, altInput, rowStatus) {
             if (saving) return;
             const file = input.files && input.files[0];
             const problem = choiceError(item, file);
             rowStatus.textContent = problem;
             if (problem) return;
+            const alt = altInput ? altInput.value.trim() : '';
+            if (alt.length > 500) {
+                rowStatus.textContent = 'Shorten the image description to 500 characters or less.';
+                return;
+            }
             saving = true;
             setStatus('Uploading ' + item.title + '…');
             try {
@@ -204,6 +223,7 @@
                     updatedAt: new Date().toISOString(),
                     data: await readFile(file)
                 };
+                if (alt) record.alt = alt;
                 if (!window.TSP_toolkitRecordOk(item, record)) throw new Error('That file could not be prepared for upload.');
                 await filesRef.child(item.id).set(record);
                 records[item.id] = record;
