@@ -2211,7 +2211,7 @@
             return m.slices + ' slices';
         }
 
-        // Dropdowns use one format everywhere: "Name (Store) · $price · makes N sandwiches".
+        // Dropdowns use one format everywhere: "Name (Store) · #item · $price · makes N sandwiches".
         // Package sizes stay in the shopping list, where they help at the store.
         function productDisplayName(item) {
             const store = item.store || '';
@@ -2231,9 +2231,15 @@
             return 'makes ' + (Math.abs(n - whole) < 1e-9 ? '' : '~') + whole + ' sandwich' + (whole === 1 ? '' : 'es');
         }
 
+        function productNumberLabel(item) {
+            const number = String(item.productNumber == null ? '' : item.productNumber).trim();
+            if (!number) return '';
+            return number.charAt(0) === '#' ? number : '#' + number;
+        }
+
         function productOptionLabel(item, perPackage, priceSuffix) {
             const price = money(item.price);
-            return [productDisplayName(item), price ? price + (priceSuffix || '') : '', makesLabel(perPackage)]
+            return [productDisplayName(item), productNumberLabel(item), price ? price + (priceSuffix || '') : '', makesLabel(perPackage)]
                 .filter(Boolean).join(' · ');
         }
 
