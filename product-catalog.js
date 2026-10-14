@@ -14,7 +14,7 @@ window.TSP_DEFAULT_CATALOG = {
       "meatType": "chicken",
       "group": "popular",
       "description": "9 oz packages",
-      "pricingTitle": "Kroger Chicken Thin",
+      "pricingTitle": "Kroger Chicken Thin Sliced",
       "pricingSize": "9 oz • 18 slices"
     },
     {
@@ -371,6 +371,9 @@ window.TSP_DEFAULT_CATALOG = {
     }
   ],
   "bags": {
+    "name": "",
+    "store": "",
+    "sizeLabel": "Sandwich size",
     "countPerBox": 480,
     "pricePerBox": 7.99
   },
