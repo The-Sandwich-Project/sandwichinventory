@@ -276,10 +276,34 @@
             color: white;
             text-decoration: underline;
         }
+
+        .admin-entry {
+            display: flex;
+            width: max-content;
+            margin: 0 0 12px auto;
+            align-items: center;
+            padding: 6px 12px;
+            background: #fff;
+            color: #236383;
+            border: 1px solid #236383;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-decoration: none;
+            opacity: 0.85;
+        }
+
+        .admin-entry:hover,
+        .admin-entry:focus-visible {
+            opacity: 1;
+            background: #236383;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="toolkit-admin.html" class="admin-entry" title="Staff only: replace toolkit files">Admin</a>
         <div class="header">
             <div class="logo-container">
                 <img src="CMYK_PRINT_TSP-01-01.jpg" alt="The Sandwich Project Logo">
@@ -298,84 +322,110 @@
             <button class="download-all-button" onclick="downloadAll()">📥 Download All PDFs</button>
         </div>
 
-        <div class="toolkit-grid">
-            <a href="toolkit/Group_Event_Reference_Guide Final.pdf" class="tool-card" target="_blank">
-                <embed src="toolkit/Group_Event_Reference_Guide Final.pdf#page=1&view=FitH" class="pdf-preview" type="application/pdf">
-                <h2>Group Event Reference Guide</h2>
-                <p>Quick-reference guide for planning and running a group sandwich-making event. Everything your team needs to know on a single page</p>
-                <span class="learn-more">Download PDF</span>
-            </a>
-
-            <a href="20260531-TSP-Food+Safety+Volunteers.pdf" class="tool-card" target="_blank">
-                <embed src="20260531-TSP-Food+Safety+Volunteers.pdf#page=1&view=FitH" class="pdf-preview" type="application/pdf">
-                <h2>Food Safety for Volunteers</h2>
-                <p>Essential guide to safe food handling and storage. Explains temperature rules, sanitation steps, the two-hour rule for deli meat, and safe delivery procedures to protect recipients and volunteers</p>
-                <span class="learn-more">Download PDF</span>
-            </a>
-
-            <a href="toolkit/PBJ Sandwich Making 2 101 03172026.pdf" class="tool-card" target="_blank">
-                <embed src="toolkit/PBJ Sandwich Making 2 101 03172026.pdf#page=1&view=FitH" class="pdf-preview" type="application/pdf">
-                <h2>PB&J Sandwich Making 101</h2>
-                <p>Step-by-step guide for preparing safe, high-quality peanut butter and jelly sandwiches for donation. Includes portion sizes, packaging instructions, and best practices for consistency and hygiene</p>
-                <span class="learn-more">Download PDF</span>
-            </a>
-
-            <a href="toolkit/Deli Sandwich Making 101 03172026.pdf" class="tool-card" target="_blank">
-                <embed src="toolkit/Deli Sandwich Making 101 03172026.pdf#page=1&view=FitH" class="pdf-preview" type="application/pdf">
-                <h2>Deli Sandwich Making 101</h2>
-                <p>Comprehensive instructions for making turkey or chicken sandwiches using only pre-packaged deli meat. Covers food safety, portioning, packaging, and refrigeration standards to maintain freshness</p>
-                <span class="learn-more">Download PDF</span>
-            </a>
-
-            <a href="toolkit/Pbj labels.pdf" class="tool-card" target="_blank">
-                <embed src="toolkit/Pbj labels.pdf#page=1&view=FitH" class="pdf-preview" type="application/pdf">
-                <h2>PB&J Labels</h2>
-                <p>Printable labels for peanut butter and jelly sandwiches. Include space for volunteer initials, prep date, and storage notes, with clear "Contains Nuts" warnings to ensure allergen safety</p>
-                <span class="learn-more">Download PDF</span>
-            </a>
-
-            <a href="toolkit/DELI_Labels_v5.pdf" class="tool-card" target="_blank">
-                <embed src="toolkit/DELI_Labels_v5.pdf#page=1&view=FitH" class="pdf-preview" type="application/pdf">
-                <h2>Deli Sandwich Labels</h2>
-                <p>Printable labels for deli sandwich loaves. Provide fields for meat type, quantity, volunteer initials, and date, plus safety checkboxes for glove use and refrigeration, helping maintain food safety and traceability</p>
-                <span class="learn-more">Download PDF</span>
-            </a>
-
-            <a href="toolkit/Deli_Meat_Portion_Guide.png" class="tool-card" target="_blank">
-                <img src="toolkit/Deli_Meat_Portion_Guide.png" class="pdf-preview" alt="Infographic from The Sandwich Project comparing deli meat slices: 2 slices of Costco Kirkland Oven Roasted Turkey Breast equals 2oz, while 5 slices of Oscar Mayer Shaved Turkey Breast equals 2oz.">
-                <h2>Deli Meat Portion Guide</h2>
-                <p>Quick visual guide for portioning deli meat by brand. Shows how many slices equal 2 oz per sandwich for Costco Kirkland and Oscar Mayer turkey breast</p>
-                <span class="learn-more">View Guide</span>
-            </a>
-        </div>
+        <div class="toolkit-grid" id="toolkitGrid"></div>
 
         <footer>
             <p>&copy; 2026 The Sandwich Project. All rights reserved.</p>
         </footer>
     </div>
 
+    <script src="toolkit-catalog.js"></script>
     <script>
-        function downloadAll() {
-            const pdfFiles = [
-                'toolkit/PBJ Sandwich Making 2 101 03172026.pdf',
-                'toolkit/Deli Sandwich Making 101 03172026.pdf',
-                '20260531-TSP-Food+Safety+Volunteers.pdf',
-                'toolkit/Pbj labels.pdf',
-                'toolkit/DELI_Labels_v5.pdf',
-                'toolkit/Group_Event_Reference_Guide Final.pdf'
-            ];
+        const TOOLKIT_FILES_URL = 'https://recipient-survey-default-rtdb.firebaseio.com/product-catalog/toolkitFiles/';
 
-            pdfFiles.forEach((file, index) => {
-                setTimeout(() => {
+        function fileAddress(path) {
+            return encodeURI(path);
+        }
+
+        function bytesFromBase64(data) {
+            const binary = atob(data);
+            const bytes = new Uint8Array(binary.length);
+            for (let index = 0; index < binary.length; index++) bytes[index] = binary.charCodeAt(index);
+            return bytes;
+        }
+
+        function renderToolkit() {
+            const grid = document.getElementById('toolkitGrid');
+            window.TSP_TOOLKIT_FILES.forEach(function(item) {
+                const card = document.createElement('a');
+                card.className = 'tool-card';
+                card.target = '_blank';
+                card.rel = 'noopener';
+                card.dataset.id = item.id;
+                card.dataset.filename = window.TSP_toolkitFileName(item.path);
+                if (item.downloadAll) card.dataset.download = '1';
+                card.href = fileAddress(item.path);
+                if (item.kind === 'image') {
+                    const image = document.createElement('img');
+                    image.className = 'pdf-preview';
+                    image.alt = item.alt || item.title;
+                    image.src = fileAddress(item.path);
+                    card.appendChild(image);
+                } else {
+                    const preview = document.createElement('embed');
+                    preview.className = 'pdf-preview';
+                    preview.type = 'application/pdf';
+                    preview.src = fileAddress(item.path) + '#page=1&view=FitH';
+                    card.appendChild(preview);
+                }
+                const title = document.createElement('h2');
+                title.textContent = item.title;
+                const description = document.createElement('p');
+                description.textContent = item.description;
+                const action = document.createElement('span');
+                action.className = 'learn-more';
+                action.textContent = item.action;
+                card.append(title, description, action);
+                grid.appendChild(card);
+            });
+        }
+
+        function applyReplacement(item, record) {
+            const card = document.querySelector('.tool-card[data-id="' + item.id + '"]');
+            if (!card || !window.TSP_toolkitRecordOk(item, record)) return;
+            const url = URL.createObjectURL(new Blob([bytesFromBase64(record.data)], { type: record.type }));
+            const filename = window.TSP_toolkitSafeName(record.name);
+            card.href = url;
+            card.dataset.filename = filename;
+            const preview = card.querySelector('.pdf-preview');
+            if (!preview) return;
+            if (preview.tagName === 'IMG') preview.src = url;
+            else preview.src = url + '#page=1&view=FitH';
+        }
+
+        async function loadReplacements() {
+            const controller = new AbortController();
+            const timer = setTimeout(function() { controller.abort(); }, 20000);
+            try {
+                await Promise.all(window.TSP_TOOLKIT_FILES.map(async function(item) {
+                    try {
+                        const response = await fetch(TOOLKIT_FILES_URL + item.id + '.json', { cache: 'no-store', signal: controller.signal });
+                        if (!response.ok) return;
+                        applyReplacement(item, await response.json());
+                    } catch (error) {
+                        console.warn('A toolkit replacement could not be loaded.', error);
+                    }
+                }));
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        function downloadAll() {
+            document.querySelectorAll('.tool-card[data-download="1"]').forEach(function(card, index) {
+                setTimeout(function() {
                     const link = document.createElement('a');
-                    link.href = file;
-                    link.download = file.split('/').pop();
+                    link.href = card.href;
+                    link.download = card.dataset.filename || 'toolkit-file';
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                }, index * 300); // Stagger downloads by 300ms
+                }, index * 300);
             });
         }
+
+        renderToolkit();
+        loadReplacements();
     </script>
 </body>
 </html>

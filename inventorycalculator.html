@@ -2428,14 +2428,30 @@
             return catalog;
         }
 
-        // Products edited on admin.html are stored in Firebase and override the bundled list.
+        // Products edited on admin.html are stored on these fields. toolkitFiles is fetched by the toolkit page only.
+        const LIVE_CATALOG_KEYS = ['meat', 'cheese', 'bread', 'peanutButter', 'jelly', 'bags', 'spatulas', 'metadata'];
+
         async function loadLiveCatalog() {
             const controller = new AbortController();
             const timer = setTimeout(function() { controller.abort(); }, 5000);
             try {
-                const response = await fetch(LIVE_CATALOG_URL, { cache: 'no-store', signal: controller.signal });
-                if (!response.ok) return null;
-                return await response.json();
+                const entries = await Promise.all(LIVE_CATALOG_KEYS.map(async function(key) {
+                    const response = await fetch(LIVE_CATALOG_URL.replace(/\.json$/, '/' + key + '.json'), {
+                        cache: 'no-store',
+                        signal: controller.signal
+                    });
+                    if (!response.ok) throw new Error('Live product list could not be loaded.');
+                    return [key, await response.json()];
+                }));
+                const catalog = {};
+                let any = false;
+                entries.forEach(function(entry) {
+                    if (entry[1] != null) {
+                        catalog[entry[0]] = entry[1];
+                        any = true;
+                    }
+                });
+                return any ? catalog : null;
             } catch (error) {
                 console.warn('Live product list could not be loaded.', error);
                 return null;
