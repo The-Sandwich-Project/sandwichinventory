@@ -37,7 +37,7 @@
         .icon-alert { background-color: #114145; }
         .icon-teal { background-color: #47B3CB; }
         .icon-white { background-color: white; }
-        .icon-muted { background-color: #888; }
+        .icon-muted { background-color: rgba(17,65,69,0.55); }
 
         /* Icon shapes - Lucide paths */
         .icon-calculator { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='16' height='20' x='4' y='2' rx='2'/%3E%3Cline x1='8' x2='16' y1='6' y2='6'/%3E%3Cline x1='16' x2='16' y1='14' y2='18'/%3E%3Cpath d='M16 10h.01'/%3E%3Cpath d='M12 10h.01'/%3E%3Cpath d='M8 10h.01'/%3E%3Cpath d='M12 14h.01'/%3E%3Cpath d='M8 14h.01'/%3E%3Cpath d='M12 18h.01'/%3E%3Cpath d='M8 18h.01'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='16' height='20' x='4' y='2' rx='2'/%3E%3Cline x1='8' x2='16' y1='6' y2='6'/%3E%3Cline x1='16' x2='16' y1='14' y2='18'/%3E%3Cpath d='M16 10h.01'/%3E%3Cpath d='M12 10h.01'/%3E%3Cpath d='M8 10h.01'/%3E%3Cpath d='M12 14h.01'/%3E%3Cpath d='M8 14h.01'/%3E%3Cpath d='M12 18h.01'/%3E%3Cpath d='M8 18h.01'/%3E%3C/svg%3E"); }
@@ -121,7 +121,7 @@
         }
         
         .header p {
-            color: #7f8c8d;
+            color: rgba(17,65,69,0.7);
             font-size: 1.2em;
         }
         
@@ -168,12 +168,12 @@
         
         .ref-card {
             background: #fff;
-            color: #333;
+            color: var(--tsp-ink);
             padding: 30px 25px;
             border-radius: 16px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(35, 99, 131, 0.15);
-            border: 2px solid #f0f0f0;
+            border: 2px solid var(--tsp-mist);
             transition: all 0.3s ease;
             position: relative;
         }
@@ -235,15 +235,15 @@
         }
         
         .ref-card .serves {
-            background: #f8f9fa;
+            background: var(--tsp-mist);
             padding: 10px 18px;
             border-radius: 20px;
             font-size: 1em;
             margin-bottom: 18px;
             display: inline-block;
             font-weight: 500;
-            color: #666;
-            border: 1px solid #e9ecef;
+            color: rgba(17,65,69,0.7);
+            border: 1px solid var(--tsp-line);
         }
         
         .cost-display {
@@ -254,18 +254,18 @@
         }
         
         .cost-item {
-            background: #f8f9fa;
+            background: var(--tsp-mist);
             padding: 12px 16px;
             border-radius: 10px;
             font-size: 1em;
             font-weight: 600;
-            color: #333;
-            border: 1px solid #e9ecef;
+            color: var(--tsp-ink);
+            border: 1px solid var(--tsp-line);
             transition: all 0.2s ease;
         }
         
         .cost-item:hover {
-            background: #e9ecef;
+            background: rgba(71,179,203,0.18);
             transform: translateY(-1px);
         }
         
@@ -494,7 +494,7 @@
         }
         
         .calc-input-group input::placeholder {
-            color: #7f8c8d;
+            color: rgba(17,65,69,0.7);
             font-style: italic;
         }
         
@@ -752,7 +752,7 @@
 
         .checklist li {
             padding: 10px 0;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid var(--tsp-line);
             display: flex;
             align-items: center;
         }
@@ -848,6 +848,13 @@
             font-size: 1.1em;
             font-weight: 400;
         }
+
+        /* Parenthetical qualifiers get their own line so the amount and item read as one phrase. */
+        .ingredient .item-note {
+            display: block;
+            font-size: 1.1em;
+            font-weight: 400;
+        }
         
         @media (max-width: 768px) {
             body {
@@ -933,8 +940,8 @@
             text-shadow: none;
         }
         .price-badge {
-            background: #fffbe8;
-            color: #114145;
+            background: var(--tsp-cream);
+            color: var(--tsp-ink);
             border-radius: 4px;
             padding: 2px 7px;
             font-weight: 700;
@@ -1679,13 +1686,13 @@
                         </details>
                         <div id="meatCustomEntry" style="display: none; margin-top: 10px;">
                             <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                                <input type="number" id="customMeatWeight" placeholder="Weight (oz)" step="0.1" min="1" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ddd;">
-                                <select id="customMeatUnit" onchange="updateCustomMeatPlaceholder()" style="padding: 10px 6px; border-radius: 6px; border: 1px solid #ddd; font-weight: 600; cursor: pointer; width: auto;">
+                                <input type="number" id="customMeatWeight" placeholder="Weight (oz)" step="0.1" min="1" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid var(--tsp-line);">
+                                <select id="customMeatUnit" onchange="updateCustomMeatPlaceholder()" style="padding: 10px 6px; border-radius: 6px; border: 1px solid var(--tsp-line); font-weight: 600; cursor: pointer; width: auto;">
                                     <option value="oz" selected>oz</option>
                                     <option value="g">g</option>
                                 </select>
                             </div>
-                            <input type="number" id="customMeatPrice" placeholder="Price ($)" step="0.01" min="0" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ddd;">
+                            <input type="number" id="customMeatPrice" placeholder="Price ($)" step="0.01" min="0" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--tsp-line);">
                         </div>
                     </div>
 
@@ -1707,7 +1714,7 @@
                     </div>
 
                     <div class="before-you-shop" role="note">
-                        <h4><span class="icon icon-alert-triangle" style="background-color: #5a3a00;"></span> Before you shop</h4>
+                        <h4><span class="icon icon-alert-triangle" style="background-color: var(--tsp-ink);"></span> Before you shop</h4>
                         <ul>
                             <li><strong>Cheese: deli-style sliced only</strong> (Muenster, Havarti, Provolone, or a deli variety pack). <strong>No American cheese, Kraft singles, or individually wrapped slices.</strong></li>
                             <li><strong>Meat: pre-packaged only</strong>, nothing sliced at the deli counter. Turkey or chicken, <strong>preferably no ham</strong>: most of the communities our partners serve can't eat it.</li>
@@ -1797,7 +1804,7 @@
                     </div>
 
                     <div class="before-you-shop" role="note">
-                        <h4><span class="icon icon-alert-triangle" style="background-color: #5a3a00;"></span> Before you shop</h4>
+                        <h4><span class="icon icon-alert-triangle" style="background-color: var(--tsp-ink);"></span> Before you shop</h4>
                         <ul>
                             <li><strong>Jelly only.</strong> No jam, preserves, or fruit spread.</li>
                         </ul>
@@ -1846,7 +1853,7 @@
     
     /* Shopping requirements banner */
     .shopping-requirements {
-        background: #e8f5f9;
+        background: var(--tsp-mist);
         border: 2px solid #47B3CB;
         color: #236383;
         padding: 14px 20px;
@@ -1874,7 +1881,7 @@
     }
     
     .requirement-text {
-        color: #555;
+        color: rgba(17,65,69,0.78);
         line-height: 1.3;
     }
     
@@ -1940,7 +1947,7 @@
     .product-size {
         font-size: 0.95em;
         line-height: 1.4;
-        color: #4a6b78;
+        color: rgba(17,65,69,0.72);
         padding: 6px 16px 14px;
     }
 
@@ -2009,7 +2016,7 @@
         <!-- Move Quick Reference section below calculator -->
         <div class="section">
             <h2><span class="icon icon-lg icon-target icon-primary"></span> Quick Reference: Popular Quantities</h2>
-            <p id="quickRefBasis" style="color: #64748b; font-size: 0.95em; margin-bottom: 16px;">Package counts for common batch sizes. Use the calculator above for exact costs with your brands.</p>
+            <p id="quickRefBasis" style="color: rgba(17,65,69,0.7); font-size: 0.95em; margin-bottom: 16px;">Package counts for common batch sizes. Use the calculator above for exact costs with your brands.</p>
             <div class="quick-ref" id="quickRefCards">
                 <!-- Populated by buildQuickReference() -->
             </div>
@@ -2022,13 +2029,16 @@
                 <h3>Every Deli Sandwich Contains</h3>
                 <div class="recipe-ingredients">
                     <div class="ingredient">
-                        <span class="amount">2</span><span class="item">slices bread (no heels)</span>
+                        <span class="amount">2</span><span class="item">slices bread</span>
+                        <span class="item-note">(no heels)</span>
                     </div>
                     <div class="ingredient">
-                        <span class="amount">2</span><span class="item">slices cheese (one per bread slice)</span>
+                        <span class="amount">2</span><span class="item">slices cheese</span>
+                        <span class="item-note">(one per bread slice)</span>
                     </div>
                     <div class="ingredient">
-                        <span class="amount">2</span><span class="item">ounces deli meat, 1 serving (turkey or chicken)</span>
+                        <span class="amount">2</span><span class="item">ounces deli meat, 1 serving</span>
+                        <span class="item-note">(turkey or chicken)</span>
                     </div>
                     <div class="ingredient">
                         <span class="amount">1</span><span class="item">zip-lock sandwich bag</span>
@@ -2117,7 +2127,7 @@
             <div class="tip-card" style="margin-top: 24px; text-align: center;">
                 <h3><span class="icon icon-shield icon-primary"></span> Download: Food Safety for Volunteers</h3>
                 <p style="margin-bottom: 18px; opacity: 0.95;">Full printable guide with temperature rules, sanitation, and safe delivery procedures.</p>
-                <a href="20260506-TSP-Food+Safety+Volunteers.pdf" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #FBAD3F; color: #1a1a1a; padding: 14px 28px; border-radius: 10px; font-weight: 600; text-decoration: none;">Open PDF</a>
+                <a href="20260506-TSP-Food+Safety+Volunteers.pdf" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #FBAD3F; color: #114145; padding: 14px 28px; border-radius: 10px; font-weight: 600; text-decoration: none;">Open PDF</a>
             </div>
             
             <div class="safety-banner" style="margin-top: 30px;">
@@ -2150,7 +2160,7 @@
                 </div>
                 
                 <div class="tip-card">
-                    <h3><span class="icon icon-check-circle" style="background-color: #2E7D32;"></span> Quality Standards</h3>
+                    <h3><span class="icon icon-check-circle" style="background-color: #236383;"></span> Quality Standards</h3>
                     <ul>
                         <li>Same quality you'd serve family</li>
                         <li>10+ days until expiration</li>
@@ -2221,6 +2231,23 @@
             if (store && name.toLowerCase().endsWith(suffix.toLowerCase())) name = name.slice(0, -suffix.length);
             const showStore = store && store !== 'Various' && name.toLowerCase().indexOf(store.toLowerCase()) === -1;
             return showStore ? name + ' (' + store + ')' : name;
+        }
+
+        // Pricing cards print the package size on its own line, so drop a trailing size from the name.
+        function nameWithoutSize(item) {
+            const stripped = String(item.name || '').replace(/[,\s]+\d+(\.\d+)?\s*(oz|ounces?|lbs?)\.?$/i, '').trim();
+            return productDisplayName(Object.assign({}, item, { name: stripped || item.name }));
+        }
+
+        // Bags aren't editable on admin.html, so their brand and bag size come from the bundled list.
+        function bagDisplayName() {
+            const bags = PRODUCT_DATA.bags || {};
+            return productDisplayName({ name: bags.name || 'Zip-lock Sandwich Bags', store: bags.store });
+        }
+
+        function bagSizeLabel() {
+            const bags = PRODUCT_DATA.bags || {};
+            return [bags.sizeLabel || '', bags.countPerBox ? bags.countPerBox + ' count' : ''].filter(Boolean).join(' • ');
         }
 
         function makesLabel(perPackage) {
@@ -2386,8 +2413,9 @@
             ['meat', 'cheese', 'bread', 'peanutButter', 'jelly'].forEach(function(key) {
                 if (Array.isArray(catalog[key])) PRODUCT_DATA[key] = catalog[key];
             });
-            if (catalog.bags) PRODUCT_DATA.bags = catalog.bags;
-            if (catalog.spatulas) PRODUCT_DATA.spatulas = catalog.spatulas;
+            // Merge so the admin page's count/price win without dropping labels it can't edit.
+            if (catalog.bags) PRODUCT_DATA.bags = Object.assign({}, PRODUCT_DATA.bags, catalog.bags);
+            if (catalog.spatulas) PRODUCT_DATA.spatulas = Object.assign({}, PRODUCT_DATA.spatulas, catalog.spatulas);
             if (catalog.metadata) PRODUCT_DATA.metadata = catalog.metadata;
             buildProductIndex();
         }
@@ -2695,7 +2723,7 @@
                 const per = positive(item.tablespoons) ? Number(item.tablespoons) / tbspPerSandwich : 0;
                 return priceCard('card-pbj', [
                     { className: 'meat-type-label', text: label },
-                    { className: 'product-title', text: productDisplayName(item) },
+                    { className: 'product-title', text: nameWithoutSize(item) },
                     { className: 'product-size', text: [item.sizeOz ? item.sizeOz + ' oz' : '', makesLabel(per)].filter(Boolean).join(' • ') },
                     { className: 'product-price', text: money(item.price) },
                     { className: 'price-note', text: perSandwichNote(item.price, per) }
@@ -2707,8 +2735,8 @@
             const perBag = PRODUCT_DATA.bags.countPerBox ? (PRODUCT_DATA.bags.pricePerBox / PRODUCT_DATA.bags.countPerBox).toFixed(2) : '';
             const supplyCards = [priceCard('card-supplies', [
                 { className: 'meat-type-label', text: 'BAGS' },
-                { className: 'product-title', text: 'Sandwich Bags' },
-                { className: 'product-size', text: PRODUCT_DATA.bags.countPerBox + ' count' },
+                { className: 'product-title', text: bagDisplayName() },
+                { className: 'product-size', text: bagSizeLabel() },
                 { className: 'product-price', text: money(PRODUCT_DATA.bags.pricePerBox) },
                 { className: 'price-note', text: perBag ? '~$' + perBag + '/bag' : '' }
             ])];
@@ -2733,8 +2761,8 @@
             function addRow(cells, options) {
                 const row = document.createElement('tr');
                 if (options && options.header) {
-                    row.style.background = '#fff3d1';
-                    row.style.color = '#b97a1a';
+                    row.style.background = 'var(--tsp-cream)';
+                    row.style.color = 'var(--tsp-ink)';
                 }
                 cells.forEach(function(cell) {
                     const node = document.createElement(cell.header ? 'th' : 'td');
@@ -2745,7 +2773,7 @@
                     }
                     if (cell.colspan) node.colSpan = cell.colspan;
                     if (cell.section) {
-                        node.style.background = '#e3f2fd';
+                        node.style.background = 'var(--tsp-mist)';
                         node.style.fontWeight = '600';
                     }
                     row.appendChild(node);
@@ -2793,9 +2821,9 @@
                 });
             });
             addRow([
-                { text: 'Zip-lock Sandwich Bags' },
+                { text: bagDisplayName() },
                 { text: money(PRODUCT_DATA.bags.pricePerBox) },
-                { text: PRODUCT_DATA.bags.countPerBox + ' count' }
+                { text: bagSizeLabel() }
             ]);
             container.replaceChildren(table);
         }
@@ -3131,7 +3159,7 @@
                 let tightBudgetWarning = '';
                 if (budget <= 50) {
                     tightBudgetWarning = `
-                        <p style="color: #E65100; margin-top: 12px; font-size: 1em; font-weight: 600;">
+                        <p style="color: #114145; margin-top: 12px; font-size: 1em; font-weight: 600;">
                             <span class="icon icon-alert-triangle icon-alert"></span> Note: Budgets under $50 are quite tight and yield limited quantities. Consider increasing your budget for better value and more sandwiches.
                         </p>
                     `;
@@ -3139,14 +3167,14 @@
                 
                 if (remaining > 5) { // More than $5 remaining
                     budgetStatusMessage = `
-                        <div style="background: rgba(76,175,80,0.15); border: 3px solid #4CAF50; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
-                            <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-check-circle" style="background-color: #2E7D32;"></span></div>
-                            <h4 style="color: #2E7D32; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Optimal Budget Planning!</h4>
-                            <p style="color: #1B5E20; margin: 0; font-size: 1.2em; font-weight: 500;">
+                        <div style="background: #E9EFF3; color: #114145; border: 3px solid #47B3CB; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                            <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-check-circle" style="background-color: #236383;"></span></div>
+                            <h4 style="color: #236383; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Optimal Budget Planning!</h4>
+                            <p style="color: #114145; margin: 0; font-size: 1.2em; font-weight: 500;">
                                 <strong>${totalSandwichesPossible} sandwiches</strong> for <strong>$${totalCost.toFixed(2)}</strong> | 
                                 Remaining budget: <strong>$${remaining}</strong> (${savingsPercent}% under budget)
                             </p>
-                            <p style="color: #2E7D32; font-size: 1em; margin: 12px 0 0 0; font-weight: 400;">
+                            <p style="color: #236383; font-size: 1em; margin: 12px 0 0 0; font-weight: 400;">
                                 This is the maximum number of sandwiches you can make within your $${budget} budget with your selected ingredients.
                             </p>
                             ${tightBudgetWarning}
@@ -3154,14 +3182,14 @@
                     `;
                 } else if (remaining > 0) { // Small amount remaining
                     budgetStatusMessage = `
-                        <div style="background: rgba(255,152,0,0.2); border: 3px solid #FF9800; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
-                            <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-alert-triangle" style="background-color: #E65100;"></span></div>
-                            <h4 style="color: #E65100; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Budget Optimized!</h4>
-                            <p style="color: #BF360C; margin: 0; font-size: 1.2em; font-weight: 500;">
+                        <div style="background: #FEF3E2; color: #114145; border: 3px solid #FBAD3F; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                            <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-alert-triangle" style="background-color: #114145;"></span></div>
+                            <h4 style="color: #114145; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Budget Optimized!</h4>
+                            <p style="color: #114145; margin: 0; font-size: 1.2em; font-weight: 500;">
                                 <strong>${totalSandwichesPossible} sandwiches</strong> for <strong>$${totalCost.toFixed(2)}</strong> | 
                                 Only <strong>$${remaining}</strong> remaining (${savingsPercent}% under budget)
                             </p>
-                            <p style="color: #E65100; font-size: 1em; margin: 12px 0 0 0; font-weight: 400;">
+                            <p style="color: rgba(17,65,69,0.8); font-size: 1em; margin: 12px 0 0 0; font-weight: 400;">
                                 This maximizes your sandwich count within your $${budget} budget.
                             </p>
                             ${tightBudgetWarning}
@@ -3169,14 +3197,14 @@
                     `;
                 } else { // Exactly at budget
                     budgetStatusMessage = `
-                        <div style="background: rgba(76,175,80,0.15); border: 3px solid #4CAF50; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
-                            <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-target" style="background-color: #2E7D32;"></span></div>
-                            <h4 style="color: #2E7D32; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Perfect Budget Match!</h4>
-                            <p style="color: #1B5E20; margin: 0; font-size: 1.2em; font-weight: 500;">
+                        <div style="background: #E9EFF3; color: #114145; border: 3px solid #47B3CB; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                            <div style="font-size: 2em; margin-bottom: 12px;"><span class="icon icon-xl icon-target" style="background-color: #236383;"></span></div>
+                            <h4 style="color: #236383; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;">Perfect Budget Match!</h4>
+                            <p style="color: #114145; margin: 0; font-size: 1.2em; font-weight: 500;">
                                 <strong>${totalSandwichesPossible} sandwiches</strong> for exactly <strong>$${totalCost.toFixed(2)}</strong> | 
                                 Uses your entire $${budget} budget
                             </p>
-                            <p style="color: #2E7D32; font-size: 1em; margin: 12px 0 0 0; font-weight: 400;">
+                            <p style="color: #236383; font-size: 1em; margin: 12px 0 0 0; font-weight: 400;">
                                 This is the maximum number of sandwiches you can make with your selected ingredients and budget.
                             </p>
                             ${tightBudgetWarning}
@@ -3651,7 +3679,7 @@
                 let tightBudgetWarning = '';
                 if (budget <= 30) {
                     tightBudgetWarning = `
-                        <div style="margin-top: 12px; padding: 10px; background: rgba(255,193,7,0.2); border-radius: 8px; font-size: 0.95em;">
+                        <div style="margin-top: 12px; padding: 10px; background: rgba(251,173,63,0.28); border-radius: 8px; font-size: 0.95em;">
                             <span class="icon icon-alert-triangle icon-alert"></span> Note: Budgets under $30 are quite tight and yield limited quantities. Consider increasing your budget for better value and more sandwiches.
                         </div>
                     `;
@@ -3659,12 +3687,12 @@
 
                 if (remaining >= budget * 0.1) {
                     budgetStatusMessage = `
-                        <div style="margin-top: 20px; padding: 20px; background: rgba(46,125,50,0.25); border-radius: 12px; text-align: center; border: 2px solid rgba(46,125,50,0.4);">
-                            <h4 style="color: #2E7D32; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-check-circle" style="background-color: #2E7D32;"></span> Optimal Budget Planning!</h4>
-                            <div style="color: #1B5E20; font-size: 1.1em;">
+                        <div style="margin-top: 20px; padding: 20px; background: #E9EFF3; color: #114145; border-radius: 12px; text-align: center; border: 2px solid #47B3CB;">
+                            <h4 style="color: #236383; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-check-circle" style="background-color: #236383;"></span> Optimal Budget Planning!</h4>
+                            <div style="color: #114145; font-size: 1.1em;">
                                 Remaining budget: <strong>$${remaining.toFixed(2)}</strong> (${savingsPercent}% under budget)
                             </div>
-                            <div style="color: #2E7D32; font-size: 0.95em; margin-top: 8px;">
+                            <div style="color: #236383; font-size: 0.95em; margin-top: 8px;">
                                 This is the maximum number of PB&J sandwiches you can make within your $${budget.toFixed(2)} budget.
                             </div>
                             ${tightBudgetWarning}
@@ -3672,12 +3700,12 @@
                     `;
                 } else if (remaining > 0) {
                     budgetStatusMessage = `
-                        <div style="margin-top: 20px; padding: 20px; background: rgba(230,81,0,0.2); border-radius: 12px; text-align: center; border: 2px solid rgba(230,81,0,0.4);">
-                            <h4 style="color: #E65100; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-chart" style="background-color: #E65100;"></span> Budget Optimized!</h4>
-                            <div style="color: #BF360C; font-size: 1.1em;">
+                        <div style="margin-top: 20px; padding: 20px; background: #FEF3E2; color: #114145; border-radius: 12px; text-align: center; border: 2px solid #FBAD3F;">
+                            <h4 style="color: #114145; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-chart" style="background-color: #114145;"></span> Budget Optimized!</h4>
+                            <div style="color: #114145; font-size: 1.1em;">
                                 Only <strong>$${remaining.toFixed(2)}</strong> remaining (${savingsPercent}% under budget)
                             </div>
-                            <div style="color: #E65100; font-size: 0.95em; margin-top: 8px;">
+                            <div style="color: rgba(17,65,69,0.8); font-size: 0.95em; margin-top: 8px;">
                                 This maximizes your PB&J sandwich count within your $${budget.toFixed(2)} budget.
                             </div>
                             ${tightBudgetWarning}
@@ -3685,12 +3713,12 @@
                     `;
                 } else {
                     budgetStatusMessage = `
-                        <div style="margin-top: 20px; padding: 20px; background: rgba(46,125,50,0.25); border-radius: 12px; text-align: center; border: 2px solid rgba(46,125,50,0.4);">
-                            <h4 style="color: #2E7D32; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-target" style="background-color: #2E7D32;"></span> Perfect Budget Match!</h4>
-                            <div style="color: #1B5E20; font-size: 1.1em;">
+                        <div style="margin-top: 20px; padding: 20px; background: #E9EFF3; color: #114145; border-radius: 12px; text-align: center; border: 2px solid #47B3CB;">
+                            <h4 style="color: #236383; margin-bottom: 12px; font-size: 1.4em; font-weight: 700;"><span class="icon icon-target" style="background-color: #236383;"></span> Perfect Budget Match!</h4>
+                            <div style="color: #114145; font-size: 1.1em;">
                                 Uses your entire $${budget.toFixed(2)} budget
                             </div>
-                            <div style="color: #2E7D32; font-size: 0.95em; margin-top: 8px;">
+                            <div style="color: #236383; font-size: 0.95em; margin-top: 8px;">
                                 This is the maximum number of PB&J sandwiches you can make with your budget.
                             </div>
                             ${tightBudgetWarning}
@@ -3750,7 +3778,7 @@
                         <input type="checkbox">
                         <div class="item-details">
                             <div class="item-name">${spatulaPackCount} × Spreading Spatula ${spatulasPerPack}-pack</div>
-                            <div class="item-meta">${spatulaPackCount * spatulasPerPack} spatulas total — <a href="https://www.amazon.com/4-Piece-Silicone-Jar-Spatula-Set/dp/B0FDGY1R58" target="_blank" rel="noopener noreferrer" style="color: #FF9900; font-weight: 600; text-decoration: underline;">Order on Amazon</a></div>
+                            <div class="item-meta">${spatulaPackCount * spatulasPerPack} spatulas total — <a href="https://www.amazon.com/4-Piece-Silicone-Jar-Spatula-Set/dp/B0FDGY1R58" target="_blank" rel="noopener noreferrer" style="color: #FBAD3F; font-weight: 600; text-decoration: underline;">Order on Amazon</a></div>
                         </div>
                         <div class="item-price">$${spatulaCost.toFixed(2)}</div>
                     </li>
@@ -3790,11 +3818,11 @@
     </script>
 </div>
 <div class="section" style="max-width: 700px; margin: 40px auto 24px auto;">
-    <details style="background: #fffbe8; border: 1.5px solid #f7c873; border-radius: 10px; box-shadow: 0 2px 8px #f7c87322; padding: 0 0 18px 0; font-size: 1em;">
-        <summary style="display: flex; align-items: center; gap: 10px; padding: 0 18px; min-height: 56px; font-weight: 600; font-size: 1.08em; color: #236383; background: linear-gradient(90deg, #ffe6b3 60%, #fffbe8 100%); border-bottom: 1.5px solid #f7c873; border-radius: 10px 10px 0 0; box-shadow: 0 2px 8px #f7c87322; cursor: pointer; outline: none; letter-spacing: 0.01em;">
-            <span class="icon icon-lg icon-shopping-cart icon-white"></span>
+    <details style="background: #FEF3E2; border: 1.5px solid #FBAD3F; border-radius: 10px; box-shadow: 0 2px 8px rgba(251,173,63,0.13); padding: 0 0 18px 0; font-size: 1em;">
+        <summary style="display: flex; align-items: center; gap: 10px; padding: 0 18px; min-height: 56px; font-weight: 600; font-size: 1.08em; color: #236383; background: linear-gradient(90deg, rgba(251,173,63,0.28) 60%, #FEF3E2 100%); border-bottom: 1.5px solid #FBAD3F; border-radius: 10px 10px 0 0; box-shadow: 0 2px 8px rgba(251,173,63,0.13); cursor: pointer; outline: none; letter-spacing: 0.01em;">
+            <span class="icon icon-lg icon-shopping-cart icon-primary"></span>
             <span>Ingredient Price Summary</span>
-            <span style="margin-left:auto; font-size:0.98em; color:#b97a1a; font-weight:400;">(click to view all ingredient prices used in calculations)</span>
+            <span style="margin-left:auto; font-size:0.98em; color:rgba(17,65,69,0.75); font-weight:400;">(click to view all ingredient prices used in calculations)</span>
         </summary>
         <div style="padding: 0 18px;">
             <!-- Table populated dynamically by buildPricingSummaryTable() -->
