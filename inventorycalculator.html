@@ -2181,6 +2181,7 @@
         const PRODUCT_DATA = JSON.parse(JSON.stringify(window.TSP_DEFAULT_CATALOG || {}));
         const MEAT_OZ_PER_SANDWICH = 2;
         const CHEESE_SLICES_PER_SANDWICH = 2;
+        const BREAD_SLICES_PER_SANDWICH = 2;
         const PB_TBSP_PER_SANDWICH = 3;
         const JELLY_TBSP_PER_SANDWICH = 1.5;
 
@@ -2293,23 +2294,34 @@
             return productOptionLabel(b, b.sandwichesPerLoaf);
         }
 
+        // Heels aren't used, so the slice count a loaf is good for is lower than what's in the bag.
+        function breadSliceLabel(b) {
+            const slices = positive(b.usableSlices)
+                ? Number(b.usableSlices)
+                : (positive(b.sandwichesPerLoaf) ? Number(b.sandwichesPerLoaf) * BREAD_SLICES_PER_SANDWICH : 0);
+            return slices ? slices + ' usable slices' : '';
+        }
+
         function breadDisplay(b) {
             const edited = changedFromDefault('bread', b, ['name', 'store', 'weightOz', 'sandwichesPerLoaf', 'price']);
             const perSandwich = Number(b.sandwichesPerLoaf) ? Number(b.price) / Number(b.sandwichesPerLoaf) : NaN;
             const weightLabel = b.dropdownWeightLabel || (b.weightOz + ' oz');
             const perSandwichNote = Number.isFinite(perSandwich) ? '~$' + perSandwich.toFixed(2) + '/sandwich' : '';
+            // Built here rather than read from pricingSize, which admin.html derives without a slice count.
+            const size = [weightLabel, breadSliceLabel(b), positive(b.sandwichesPerLoaf) ? '~' + b.sandwichesPerLoaf + ' sandwiches' : '']
+                .filter(Boolean).join(' • ');
             if (!edited && b.pricingTitle) {
                 const range = b.pricingPrice && b.pricingPrice !== money(b.price) ? 'usually ' + b.pricingPrice : '';
                 return {
                     title: b.pricingTitle,
-                    size: b.pricingSize || '',
+                    size: size,
                     price: money(b.price),
                     note: [perSandwichNote, range].filter(Boolean).join(' • ')
                 };
             }
             return {
                 title: b.name || '',
-                size: weightLabel + ' • ~' + b.sandwichesPerLoaf + ' sandwiches',
+                size: size,
                 price: money(b.price),
                 note: perSandwichNote
             };
@@ -2808,7 +2820,8 @@
             });
             PRODUCT_DATA.bread.filter(isVisibleProduct).forEach(function(b) {
                 const display = breadDisplay(b);
-                const note = '~' + b.sandwichesPerLoaf + ' sandwiches' + (b.store && changedFromDefault('bread', b, ['store']) ? ' • ' + b.store : '');
+                const note = [breadSliceLabel(b), '~' + b.sandwichesPerLoaf + ' sandwiches'].filter(Boolean).join(' • ')
+                    + (b.store && changedFromDefault('bread', b, ['store']) ? ' • ' + b.store : '');
                 addRow([{ text: display.title }, { text: display.price }, { text: note }]);
             });
             const spreads = [['peanutButter', 'Peanut Butter'], ['jelly', 'Jelly']];
