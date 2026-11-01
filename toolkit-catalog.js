@@ -26,7 +26,7 @@
             id: 'pbj-making',
             title: 'PB&J Sandwich Making 101',
             description: 'Step-by-step guide for preparing safe, high-quality peanut butter and jelly sandwiches for donation. Includes portion sizes, packaging instructions, and best practices for consistency and hygiene',
-            path: 'toolkit/PBJ Sandwich Making 2 101 03172026.pdf',
+            path: 'toolkit/PBJ Sandwich Making 2 101 11012026.pdf',
             kind: 'pdf',
             types: ['application/pdf'],
             action: 'Download PDF',
