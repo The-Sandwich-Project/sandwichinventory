@@ -82,7 +82,7 @@
         {
             id: 'jar-spatulas',
             title: 'Jar Spatulas for Spreading',
-            description: 'Long-handled silicone jar spatulas (4-pack) that reach the bottom of peanut butter and jelly jars and spread quickly and evenly. Our go-to tool for PB&J assembly lines',
+            description: 'Long-handled silicone jar spatulas (4-pack) that reach the bottom of peanut butter and jelly jars and spread quickly and evenly. Our go-to tool for PB&J assembly',
             url: 'https://www.amazon.com/4-Piece-Silicone-Jar-Spatula-Set/dp/B0FDGY1R58',
             image: 'pb-spreaders.png',
             alt: 'Four long-handled silicone jar spatulas in orange, blue, red, and black',
