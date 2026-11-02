@@ -87,6 +87,15 @@
             image: 'pb-spreaders.png',
             alt: 'Four long-handled silicone jar spatulas in orange, blue, red, and black',
             action: 'Buy on Amazon'
+        },
+        {
+            id: 'hairnets',
+            title: 'Hairnets',
+            description: 'Disposable nylon hairnets to keep hair out of the food. Every volunteer handling bread, fillings, or finished sandwiches should wear one',
+            url: 'https://a.co/d/0c0nbw6B',
+            image: 'toolkit/hairnets.jpg',
+            alt: 'Black disposable mesh hairnet with an elastic band',
+            action: 'Buy on Amazon'
         }
     ];
 
