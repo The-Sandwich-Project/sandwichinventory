@@ -411,6 +411,67 @@
             border-color: var(--tsp-accent);
         }
 
+        /* Hairnet callout (both calculators): always visible, not opt-in */
+        .hairnet-callout {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 12px 16px;
+            background: var(--tsp-cream);
+            color: var(--tsp-ink);
+            border-left: 6px solid var(--tsp-accent);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+
+        .hairnet-callout h4 {
+            font-size: 1.1em;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .hairnet-callout p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .hairnet-callout .hairnet-thumb {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+        }
+
+        .hairnet-callout .hairnet-thumb img {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid rgba(17,65,69,0.15);
+        }
+
+        .hairnet-callout .hairnet-thumb span {
+            color: var(--tsp-ink);
+            font-size: 0.8em;
+            font-weight: 700;
+            text-decoration: underline;
+            text-decoration-color: var(--tsp-accent);
+        }
+
+        @media (max-width: 560px) {
+            .hairnet-callout { grid-template-columns: 1fr; }
+            .hairnet-callout .hairnet-thumb {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 12px;
+            }
+        }
+
         /* Two recipe cards side by side */
         .recipe-grid {
             display: grid;
@@ -1713,6 +1774,17 @@
                         </select>
                     </div>
 
+                    <div class="hairnet-callout" role="note">
+                        <div>
+                            <h4>Hairnets for every volunteer</h4>
+                            <p>Please pick these up with your groceries. Everyone should wear a hairnet the whole time ingredients are out and open. These are the ones we recommend.</p>
+                        </div>
+                        <a class="hairnet-thumb" href="https://a.co/d/0c0nbw6B" target="_blank" rel="noopener noreferrer">
+                            <img src="toolkit/hairnets.jpg" alt="Disposable mesh hairnet">
+                            <span>Order on Amazon</span>
+                        </a>
+                    </div>
+
                     <div class="before-you-shop" role="note">
                         <h4><span class="icon icon-alert-triangle" style="background-color: var(--tsp-ink);"></span> Before you shop</h4>
                         <ul>
@@ -1801,6 +1873,17 @@
                             <input type="number" id="spatulaPackCount" min="1" value="1" placeholder="1">
                             <div class="field-note">Plan 2 per table (one for peanut butter, one for jelly). Overnight shipping is available on Amazon.</div>
                         </div>
+                    </div>
+
+                    <div class="hairnet-callout" role="note">
+                        <div>
+                            <h4>Hairnets for every volunteer</h4>
+                            <p>Please pick these up with your groceries. Everyone should wear a hairnet the whole time ingredients are out and open. These are the ones we recommend.</p>
+                        </div>
+                        <a class="hairnet-thumb" href="https://a.co/d/0c0nbw6B" target="_blank" rel="noopener noreferrer">
+                            <img src="toolkit/hairnets.jpg" alt="Disposable mesh hairnet">
+                            <span>Order on Amazon</span>
+                        </a>
                     </div>
 
                     <div class="before-you-shop" role="note">
@@ -3301,7 +3384,8 @@
                     <li>
                         <input type="checkbox">
                         <div class="item-details">
-                            <div class="item-name">Hair ties/nets and beard nets</div>
+                            <div class="item-name">Hairnets (one per volunteer)</div>
+                            <div class="item-meta">Plus beard nets if needed — <a href="https://a.co/d/0c0nbw6B" target="_blank" rel="noopener noreferrer" style="color: #FBAD3F; font-weight: 600; text-decoration: underline;">Order hairnets on Amazon</a></div>
                         </div>
                     </li>
                     <li>
@@ -3448,7 +3532,7 @@
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 28px; font-size: 13px;">
                             <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e2e8f0; color: #333;"><span style="color: #47B3CB; margin-right: 6px;">&#9744;</span> ${r.icePacksNeeded} × Ice packs (enough to touch every loaf)</td></tr>
                             <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e2e8f0; background: #f8fcfd; color: #333;"><span style="color: #47B3CB; margin-right: 6px;">&#9744;</span> Food-safe disposable gloves (multiple boxes)</td></tr>
-                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e2e8f0; color: #333;"><span style="color: #47B3CB; margin-right: 6px;">&#9744;</span> Hair ties/nets and beard nets</td></tr>
+                            <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e2e8f0; color: #333;"><span style="color: #47B3CB; margin-right: 6px;">&#9744;</span> Hairnets for every volunteer (plus beard nets if needed): <a href="https://a.co/d/0c0nbw6B" style="color: #236383;">a.co/d/0c0nbw6B</a></td></tr>
                             <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e2e8f0; background: #f8fcfd; color: #333;"><span style="color: #47B3CB; margin-right: 6px;">&#9744;</span> Hand soap</td></tr>
                             <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e2e8f0; color: #333;"><span style="color: #47B3CB; margin-right: 6px;">&#9744;</span> Paper towels for cleanup</td></tr>
                             <tr><td style="padding: 7px 12px; border-bottom: 1px solid #e2e8f0; background: #f8fcfd; color: #333;"><span style="color: #47B3CB; margin-right: 6px;">&#9744;</span> Disinfecting wipes for surfaces</td></tr>
@@ -3801,6 +3885,13 @@
                         <div class="item-details">
                             <div class="item-name">Food-safe disposable gloves</div>
                             <div class="item-meta">Multiple boxes</div>
+                        </div>
+                    </li>
+                    <li>
+                        <input type="checkbox">
+                        <div class="item-details">
+                            <div class="item-name">Hairnets (one per volunteer)</div>
+                            <div class="item-meta">Plus beard nets if needed — <a href="https://a.co/d/0c0nbw6B" target="_blank" rel="noopener noreferrer" style="color: #FBAD3F; font-weight: 600; text-decoration: underline;">Order hairnets on Amazon</a></div>
                         </div>
                     </li>
                     <li>
