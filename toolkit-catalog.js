@@ -75,6 +75,30 @@
         }
     ];
 
+    // Shopping links: cards that open an outside store page instead of a toolkit file.
+    // Kept apart from FILES so the admin page doesn't offer to replace them and
+    // "Download All PDFs" skips them.
+    const LINKS = [
+        {
+            id: 'jar-spatulas',
+            title: 'Jar Spatulas for Spreading',
+            description: 'Long-handled silicone jar spatulas (4-pack) that reach the bottom of peanut butter and jelly jars and spread quickly and evenly. Our go-to tool for PB&J assembly',
+            url: 'https://www.amazon.com/4-Piece-Silicone-Jar-Spatula-Set/dp/B0FDGY1R58',
+            image: 'pb-spreaders.png',
+            alt: 'Four long-handled silicone jar spatulas in orange, blue, red, and black',
+            action: 'Buy on Amazon'
+        },
+        {
+            id: 'hairnets',
+            title: 'Hairnets',
+            description: 'Disposable hairnets to maintain the optimal food safety standards TSP is known for. Please have any volunteers wear one while any ingredients are still out and open',
+            url: 'https://a.co/d/0c0nbw6B',
+            image: 'toolkit/hairnets.jpg',
+            alt: 'Black disposable mesh hairnet with an elastic band',
+            action: 'Buy on Amazon'
+        }
+    ];
+
     function typeFromName(name) {
         const lower = String(name || '').toLowerCase();
         if (lower.endsWith('.pdf')) return 'application/pdf';
@@ -90,6 +114,7 @@
     }
 
     window.TSP_TOOLKIT_FILES = FILES;
+    window.TSP_TOOLKIT_LINKS = LINKS;
     window.TSP_TOOLKIT_MAX_BYTES = MAX_BYTES;
     window.TSP_toolkitFileName = function(path) {
         return String(path || '').split('/').pop();

@@ -107,6 +107,14 @@
             border-top: 5px solid #A31C41;
         }
 
+        .tool-card:nth-child(8) {
+            border-top: 5px solid #236383;
+        }
+
+        .tool-card:nth-child(9) {
+            border-top: 5px solid #007E8C;
+        }
+
         .tool-card h2 {
             color: #236383;
             font-size: 1.6em;
@@ -182,6 +190,15 @@
             color: #A31C41;
         }
 
+        .tool-card:nth-child(8) .learn-more {
+            color: #236383;
+        }
+
+        .tool-card:nth-child(9) h2,
+        .tool-card:nth-child(9) .learn-more {
+            color: #007E8C;
+        }
+
         .tool-card .learn-more::after {
             content: " →";
         }
@@ -197,6 +214,12 @@
 
         img.pdf-preview {
             height: auto;
+        }
+
+        img.pdf-preview.product-preview {
+            height: 200px;
+            object-fit: contain;
+            background: #fff;
         }
 
         .calculator-section {
@@ -376,6 +399,27 @@
                 action.className = 'learn-more';
                 action.textContent = item.action;
                 card.append(title, description, action);
+                grid.appendChild(card);
+            });
+            (window.TSP_TOOLKIT_LINKS || []).forEach(function(item) {
+                const card = document.createElement('a');
+                card.className = 'tool-card';
+                card.target = '_blank';
+                card.rel = 'noopener noreferrer';
+                card.dataset.id = item.id;
+                card.href = item.url;
+                const image = document.createElement('img');
+                image.className = 'pdf-preview product-preview';
+                image.alt = item.alt || item.title;
+                image.src = fileAddress(item.image);
+                const title = document.createElement('h2');
+                title.textContent = item.title;
+                const description = document.createElement('p');
+                description.textContent = item.description;
+                const action = document.createElement('span');
+                action.className = 'learn-more';
+                action.textContent = item.action;
+                card.append(image, title, description, action);
                 grid.appendChild(card);
             });
         }
