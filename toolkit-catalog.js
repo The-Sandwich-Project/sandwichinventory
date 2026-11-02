@@ -91,7 +91,7 @@
         {
             id: 'hairnets',
             title: 'Hairnets',
-            description: 'Disposable nylon hairnets to keep hair out of the food. Every volunteer handling bread, fillings, or finished sandwiches should wear one',
+            description: 'Disposable hairnets to maintain the optimal food safety standards TSP is known for. Please have any volunteers wear one while any ingredients are still out and open',
             url: 'https://a.co/d/0c0nbw6B',
             image: 'toolkit/hairnets.jpg',
             alt: 'Black disposable mesh hairnet with an elastic band',
